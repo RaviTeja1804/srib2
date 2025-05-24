@@ -8,7 +8,7 @@ class authController {
       if (!user || user.password !== password)
         return res.status(400).json({ msg: "Invalid credentials" });
 
-      res.json({ msg: "Login success", userId: user._id });
+      res.json({ msg: "Login success", pieces: user.pieces });
     } catch (err) {
       res.status(500).json({ msg: "Server error" });
     }
@@ -22,7 +22,7 @@ class authController {
 
       const user = new userModel({ username, password });
       await user.save();
-      res.status(201).json({ msg: "User registered" });
+      res.status(201).json({ msg: "User registered", pieces: user.pieces});
     } catch (err) {
       res.status(500).json({ msg: "Server error" });
     }
