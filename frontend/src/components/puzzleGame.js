@@ -1,8 +1,14 @@
-import React, { useState } from 'react';
-import './puzzleGame.css';
+import React, { useState, useEffect } from "react";
+import "./puzzleGame.css";
 
 function PuzzleGame() {
-  const [collectedPieces, setCollectedPieces] = useState([0, 2, 3, 5, 7, 10, 11, 13]);
+  const [collectedPieces, setCollectedPieces] = useState([]);
+  useEffect(() => {
+    const storedPieces = localStorage.getItem("pieces");
+    if (storedPieces) {
+      setCollectedPieces(JSON.parse(storedPieces));
+    }
+  }, []);
   const totalPieces = 16;
   const imgWidth = 400;
   const imgHeight = 277;
@@ -19,11 +25,17 @@ function PuzzleGame() {
           return (
             <div
               key={index}
-              className={`puzzle-piece ${collectedPieces.includes(index) ? 'collected' : 'empty'}`}
+              className={`puzzle-piece ${
+                collectedPieces.includes(index) ? "collected" : "empty"
+              }`}
               style={{
-                backgroundImage: collectedPieces.includes(index) ? 'url(/jigsaw2.jpg)' : 'none',
-                backgroundPosition: `-${col * pieceWidth}px -${row * pieceHeight}px`,
-                backgroundSize: `${imgWidth}px ${imgHeight}px`
+                backgroundImage: collectedPieces.includes(index)
+                  ? "url(/jigsaw2.jpg)"
+                  : "none",
+                backgroundPosition: `-${col * pieceWidth}px -${
+                  row * pieceHeight
+                }px`,
+                backgroundSize: `${imgWidth}px ${imgHeight}px`,
               }}
             />
           );

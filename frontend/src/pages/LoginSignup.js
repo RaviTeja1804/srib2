@@ -1,71 +1,100 @@
-import React, { useState } from 'react'
-import './LoginSignup.css'
+import React, { useState } from "react";
+import "./LoginSignup.css";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 function LoginSignup() {
-    const [isLogin, setIsLogin] = useState(true);
-    const navigate = useNavigate();
-    const [username, setUsername] = useState("");
-    const [password, setPassword] = useState("");
-    const [fullname, setFullname] = useState("");
+  const [isLogin, setIsLogin] = useState(true);
+  const navigate = useNavigate();
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [fullname, setFullname] = useState("");
 
-    const login = async () => {
-        // try {
-        //     const res = await axios.get("http://localhost:4000/login", {
-        //         username,
-        //         password
-        //     });
-        //     if (res.data?.error) {
-        //         console.log(res.data.error);
-        //         navigate("/");
-        //     } else {
-        //         navigate("/home");
-        //     }
-        // } catch (err) {
-        //     navigate("/");
-        // }
-        navigate("/home")
-    };
+  const login = async () => {
+    try {
+      const res = await axios.post("http://localhost:4000/login", {
+        username,
+        password,
+      });
 
-    const signup = async () => {
-        // try {
-        //     const res = await axios.get("http://localhost:4000/signup", {
-        //         username,
-        //         password,
-        //         fullname
-        //     });
-        //     if (res.data?.error) {
-        //         console.log(res.data.error);
-        //         navigate("/");
-        //     } else {
-        //         navigate("/home");
-        //     }
-        // } catch (err) {
-        //     navigate("/");
-        // }
-        navigate("/home")
+      if (res.status !== 200 || res.data.msg !== "Login success") {
+        console.error(res.data.msg);
+        navigate("/");
+      } else {
+        const pieces = res.data.pieces; 
+        localStorage.setItem("pieces", JSON.stringify(pieces));
+        navigate("/home");
+      }
+    } catch (err) {
+      console.error("Login error:", err.response?.data?.msg || err.message);
+      alert(err.response?.data?.msg || "Login failed");
+      navigate("/");
     }
+  };
 
-    return (
-        <div className="auth-container">
-            <h1>{isLogin ? "Login" : "Sign Up"}</h1>
+  const signup = async () => {
+    try {
+      console.log("hello");
+      const res = await axios.post("http://localhost:4000/signup", {
+        username,
+        password,
+        fullname,
+      });
+      if (res.data?.msg === "User registered") {
+        navigate("/home");
+      } else {
+        console.log(res.data.msg);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
-            <form>
-                {!isLogin && <input type="text" placeholder="Full Name" value={fullname} onChange={(e) => setFullname(e.target.value)} required />}
-                <input type="text" placeholder="Username" value={username} onChange={(e) => setUsername(e.target.value)} required />
-                <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+  return (
+    <div className="auth-container">
+      <h1>{isLogin ? "Login" : "Sign Up"}</h1>
 
-                <button type="submit" onClick={() => isLogin ? login() : signup()}>{isLogin ? "Login" : "Sign Up"}</button>
-            </form>
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          isLogin ? login() : signup();
+        }}
+      >
+        {!isLogin && (
+          <input
+            type="text"
+            placeholder="Full Name"
+            value={fullname}
+            onChange={(e) => setFullname(e.target.value)}
+            required
+          />
+        )}
+        <input
+          type="text"
+          placeholder="Username"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          required
+        />
+        <input
+          type="password"
+          placeholder="Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+        />
 
-            <p>
-                {isLogin ? "Don't have an account? " : "Already have an account? "}
-                <button onClick={() => setIsLogin(!isLogin)}>
-                    {isLogin ? "Sign Up" : "Login"}
-                </button>
-            </p>
-        </div>
-    );
+        <button type="submit">{isLogin ? "Login" : "Sign Up"}</button>
+      </form>
+
+      <p>
+        {isLogin ? "Don't have an account? " : "Already have an account? "}
+        <button onClick={() => setIsLogin(!isLogin)}>
+          {isLogin ? "Sign Up" : "Login"}
+        </button>
+      </p>
+    </div>
+  );
 }
 
-export default LoginSignup
+export default LoginSignup;

@@ -15,12 +15,14 @@ class authController {
   }
 
   async registerHandler(req, res) {
-    const { username, password } = req.body;
+    const { username, password, fullname } = req.body;
+    console.log(req.body);
     try {
       const existing = await userModel.findOne({ username });
       if (existing) return res.status(400).json({ msg: "Username taken" });
-
-      const user = new userModel({ username, password });
+      console.log(2)
+      const user = new userModel({ username, password, fullName: fullname });
+      console.log(user);
       await user.save();
       res.status(201).json({ msg: "User registered", pieces: user.pieces});
     } catch (err) {

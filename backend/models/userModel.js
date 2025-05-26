@@ -13,7 +13,7 @@ const userModel = new mongoose.Schema({
     password:{
         type: String,
         required: true,
-        minilength: 4
+        minlength: 4
     },
     pieces: {
         type: [Number],
