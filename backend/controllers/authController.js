@@ -5,10 +5,12 @@ class authController {
     const { username, password } = req.body;
     try {
       const user = await userModel.findOne({ username });
+      console.log(user)
       if (!user || user.password !== password)
         return res.status(400).json({ msg: "Invalid credentials" });
-
-      res.json({ msg: "Login success", pieces: user.pieces });
+      console.log(1)
+      const { password, ...userData } = user._doc;
+      res.json({ msg: "Login success", user: userData });
     } catch (err) {
       res.status(500).json({ msg: "Server error" });
     }
@@ -20,11 +22,13 @@ class authController {
     try {
       const existing = await userModel.findOne({ username });
       if (existing) return res.status(400).json({ msg: "Username taken" });
-      console.log(2)
+      console.log(2);
       const user = new userModel({ username, password, fullName: fullname });
       console.log(user);
       await user.save();
-      res.status(201).json({ msg: "User registered", pieces: user.pieces});
+      console.log("saved");
+      const { password, ...userData } = user._doc;
+      res.status(201).json({ msg: "User registered", user: userData });
     } catch (err) {
       res.status(500).json({ msg: "Server error" });
     }

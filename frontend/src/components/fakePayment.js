@@ -1,7 +1,8 @@
 import React from 'react';
+import axios from 'axios';
 import './fakePayment.css';
 
-function FakePayment({ onPaymentSuccess }) {
+function FakePayment() {
   const paymentMethods = [
     { name: "Credit Card", pieces: 3, icon: "💳" },
     { name: "UPI", pieces: 1, icon: "📱" },
@@ -9,12 +10,20 @@ function FakePayment({ onPaymentSuccess }) {
     { name: "Cryptocurrency", pieces: 4, icon: "₿" }
   ];
 
-  const handlePayment = (pieces) => {
-    // Simulate payment processing
-    setTimeout(() => {
-      onPaymentSuccess(pieces);
-      alert(`Payment successful! You earned ${pieces} puzzle pieces.`);
-    }, 1000);
+  const handlePayment = async (paymentType) => {
+    const storedUser = localStorage.getItem("user");
+    const user = JSON.parse(storedUser);
+    const username = user.username;
+    try {
+      const res = await axios.post('http://localhost:4000/pay', {
+        username,
+        paymentType
+      });
+
+      alert(`${res.data.msg}\nYou now have ${res.data.pieces.length} pieces.`);
+    } catch (err) {
+      alert(err.response?.data?.msg || "Payment failed");
+    }
   };
 
   return (
@@ -25,7 +34,7 @@ function FakePayment({ onPaymentSuccess }) {
           <div 
             key={method.name}
             className="payment-card"
-            onClick={() => handlePayment(method.pieces)}
+            onClick={() => handlePayment(method.name)}
           >
             <div className="payment-icon">{method.icon}</div>
             <h3>{method.name}</h3>

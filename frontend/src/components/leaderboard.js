@@ -1,16 +1,24 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import './leaderboard.css';
+import axios from 'axios'; 
 
 function Leaderboard() {
-  const users = [
-    { id: 1, name: 'Alex Johnson', collectedPieces: 16 },
-    { id: 2, name: 'Sam Wilson', collectedPieces: 14 },
-    { id: 3, name: 'Taylor Swift', collectedPieces: 12 },
-    { id: 4, name: 'Jordan Lee', collectedPieces: 9 },
-    { id: 5, name: 'Casey Smith', collectedPieces: 7 },
-    { id: 6, name: 'Riley Davis', collectedPieces: 5 },
-    { id: 7, name: 'Morgan Taylor', collectedPieces: 3 }
-  ];
+
+  const [users, setUsers] = useState([]);
+
+  useEffect(() => {
+    const fetchLeaderboard = async () => {
+      try {
+        const res = await axios.get('http://localhost:4000/leaderboard');
+        const sortedUsers = res.data.sort((a, b) => b.pieces.length - a.pieces.length);
+        setUsers(sortedUsers);
+      } catch (err) {
+        console.error('Failed to fetch leaderboard:', err);
+      }
+    };
+
+    fetchLeaderboard();
+  }, []);
 
   const getMedalClass = (rank) => {
     if (rank === 1) return 'gold';
@@ -37,10 +45,10 @@ function Leaderboard() {
               <td className={`table-data rank-cell ${getMedalClass(index + 1)}`}>
                 {index + 1}
               </td>
-              <td className="table-data player-cell">{user.name}</td>
+              <td className="table-data player-cell">{user.username}</td>
               <td className="table-data pieces-cell">
                 <span className={`pieces-count ${getMedalClass(index + 1)}`}>
-                  {user.collectedPieces}
+                  {user.pieces.length}
                 </span>
               </td>
             </tr>

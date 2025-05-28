@@ -21,8 +21,8 @@ function LoginSignup() {
         console.error(res.data.msg);
         navigate("/");
       } else {
-        const pieces = res.data.pieces; 
-        localStorage.setItem("pieces", JSON.stringify(pieces));
+        const user = res.data.user;
+        localStorage.setItem("user", JSON.stringify(user));
         navigate("/home");
       }
     } catch (err) {
@@ -40,7 +40,10 @@ function LoginSignup() {
         password,
         fullname,
       });
+
       if (res.data?.msg === "User registered") {
+        const user = res.data.user;
+        localStorage.setItem("user", JSON.stringify(user));
         navigate("/home");
       } else {
         console.log(res.data.msg);

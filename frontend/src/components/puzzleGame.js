@@ -4,9 +4,10 @@ import "./puzzleGame.css";
 function PuzzleGame() {
   const [collectedPieces, setCollectedPieces] = useState([]);
   useEffect(() => {
-    const storedPieces = localStorage.getItem("pieces");
-    if (storedPieces) {
-      setCollectedPieces(JSON.parse(storedPieces));
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      const user = JSON.parse(storedUser);
+      setCollectedPieces(user.pieces || []);
     }
   }, []);
   const totalPieces = 16;
