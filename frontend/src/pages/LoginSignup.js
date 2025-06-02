@@ -46,9 +46,11 @@ function LoginSignup() {
         localStorage.setItem("user", JSON.stringify(user));
         navigate("/home");
       } else {
+        alert(res.data.msg);
         console.log(res.data.msg);
       }
     } catch (err) {
+      alert("Signup failed");
       console.log(err);
     }
   };
