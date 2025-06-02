@@ -2,7 +2,7 @@ import React from 'react';
 import axios from 'axios';
 import './fakePayment.css';
 
-function FakePayment() {
+function FakePayment({ pieces, setPieces }) {
   const paymentMethods = [
     { name: "Credit Card", pieces: 3, icon: "💳" },
     { name: "UPI", pieces: 1, icon: "📱" },
@@ -14,11 +14,16 @@ function FakePayment() {
     const storedUser = localStorage.getItem("user");
     const user = JSON.parse(storedUser);
     const username = user.username;
+
     try {
       const res = await axios.post('http://localhost:4000/pay', {
         username,
         paymentType
       });
+
+      user.pieces = res.data.pieces;
+      localStorage.setItem("user", JSON.stringify(user));
+      setPieces(res.data.pieces);
 
       alert(`${res.data.msg}\nYou now have ${res.data.pieces.length} pieces.`);
     } catch (err) {
@@ -29,6 +34,7 @@ function FakePayment() {
   return (
     <div className="payment-container">
       <h2>Complete a Payment to Earn Puzzle Pieces</h2>
+      <div>You have {pieces.length} pieces collected.</div>
       <div className="payment-methods">
         {paymentMethods.map((method) => (
           <div 

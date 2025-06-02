@@ -12,13 +12,11 @@ const paymentRewards = {
 
 class paymentController {
   async paymentHandler(req, res) {
-    const { userId, paymentType } = req.body;
-
-    const reward = paymentRewards[paymentType];
+    const reward = paymentRewards[req.body.paymentType];
     if (!reward) return res.status(400).json({ msg: "Sorry no pieces won" });
 
     try {
-      const user = await userModel.findById(userId);
+      const user = await userModel.findOne({username: req.body.username});
       if (!user) return res.status(404).json({ msg: "User not found" });
 
       const totalPieces = 16;

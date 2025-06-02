@@ -1,15 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import "./puzzleGame.css";
 
-function PuzzleGame() {
-  const [collectedPieces, setCollectedPieces] = useState([]);
-  useEffect(() => {
-    const storedUser = localStorage.getItem("user");
-    if (storedUser) {
-      const user = JSON.parse(storedUser);
-      setCollectedPieces(user.pieces || []);
-    }
-  }, []);
+function PuzzleGame({ pieces }) {
   const totalPieces = 16;
   const imgWidth = 400;
   const imgHeight = 277;
@@ -27,10 +19,10 @@ function PuzzleGame() {
             <div
               key={index}
               className={`puzzle-piece ${
-                collectedPieces.includes(index) ? "collected" : "empty"
+                pieces.includes(index) ? "collected" : "empty"
               }`}
               style={{
-                backgroundImage: collectedPieces.includes(index)
+                backgroundImage: pieces.includes(index)
                   ? "url(/jigsaw2.jpg)"
                   : "none",
                 backgroundPosition: `-${col * pieceWidth}px -${
