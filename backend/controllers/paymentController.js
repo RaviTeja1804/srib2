@@ -6,7 +6,7 @@ const paymentRewards = {
   "UPI": 1,
   "Mobile Recharge": 2,
   "Electricity Bill": 2,
-  "PayPal": 1,
+  "PayPal": 2,
   "Cryptocurrency": 4
 };
 
