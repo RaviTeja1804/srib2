@@ -31,8 +31,49 @@ class JigsawImageController {
       "12": "Christmas with tree, snow, and decorations"
     };
 
+    const monthNames = {
+      "01": "January", "02": "February", "03": "March", "04": "April",
+      "05": "May", "06": "June", "07": "July", "08": "August", 
+      "09": "September", "10": "October", "11": "November", "12": "December"
+    };
+
     const monthKey = now.toISOString().slice(5, 7); // "MM"
-    const prompt = monthPrompts[monthKey] || "Beautiful festival or seasonal scene";
+    let prompt = monthPrompts[monthKey] || "Beautiful festival or seasonal scene";
+
+    const monthName = monthNames[monthKey];
+    const geminiPrompt = `Give me a short, descriptive prompt (max 10 words ONLY) for a general event or occasion celebrated mainly in India or worldwide during the month of ${monthName}. Focus on themes, symbols, or decorations suitable for an image.`;
+
+    // Generate prompt using Gemini AI
+      try {
+        const geminiResponse = await axios.post(
+          `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${process.env.GOOGLE_AI_STUDIO_API_KEY}`,
+          {
+            contents: [
+              {
+                parts: [
+                  {
+                    text: geminiPrompt
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          }
+        );
+
+        prompt = geminiResponse.data.candidates[0].content.parts[0].text.trim();
+        console.log(`Generated prompt for ${monthName}:`, prompt);
+
+      } catch (geminiError) {
+        console.error("Gemini API error:", geminiError.response?.data || geminiError.message);
+        // Fallback to hardcoded prompt
+        prompt = monthPrompts[monthKey] || "Beautiful festival or seasonal scene";
+        console.log(`Using fallback prompt for ${monthName}:`, prompt);
+      }
 
     try {
       const existing = await jigsawImageModel.findOne({ month });
